@@ -1,0 +1,58 @@
+{
+  "name": "filafly/filament-detached-slide-overs",
+  "description": "Slide-overs that float off the edge of the screen in Filament panels: a rounded card with the page showing around it, for one action or every slide-over in the panel.",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "Laravel",
+    "Filament",
+    "slide-over",
+    "modal",
+    "actions"
+  ],
+  "homepage": "https://filafly.com/themes/lucent?utm_source=github&utm_medium=readme&utm_campaign=detached",
+  "authors": [
+    {
+      "role": "Developer",
+      "name": "Nolan Nordlund",
+      "email": "nolan@filafly.com",
+      "homepage": "https://www.filafly.com/"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "filament/filament": "^4.11 || ^5.6",
+    "spatie/laravel-package-tools": "^1.92"
+  },
+  "autoload": {
+    "psr-4": {
+      "Filafly\\DetachedSlideOvers\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Filafly\\DetachedSlideOvers\\DetachedSlideOversServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  },
+  "require-dev": {
+    "laravel/pint": "^1.22",
+    "orchestra/testbench": "^10.0 || ^11.0",
+    "phpunit/phpunit": "^11.5 || ^12.3"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Filafly\\DetachedSlideOvers\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "format": "vendor/bin/pint"
+  }
+}
