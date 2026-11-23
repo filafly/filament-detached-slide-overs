@@ -44,7 +44,7 @@ class DetachedSlideOversPlugin implements Plugin
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
                 fn (): ?HtmlString => $this->isCurrentPanel($panelId)
-                    ? $this->renderCustomProperties()
+                    ? $this->renderCustomProperties($panelId)
                     : null,
             )
             ->renderHook(
@@ -112,7 +112,11 @@ class DetachedSlideOversPlugin implements Plugin
         return filament()->getCurrentPanel()?->getId() === $panelId;
     }
 
-    protected function renderCustomProperties(): ?HtmlString
+    /**
+     * Scoped to this panel's `<body>` rather than `:root`, because SPA mode
+     * keeps the `<style>` tags of panels visited earlier in the `<head>`.
+     */
+    protected function renderCustomProperties(string $panelId): ?HtmlString
     {
         $properties = array_filter([
             '--fi-detached-slide-over-gap' => $this->getGap(),
@@ -127,7 +131,22 @@ class DetachedSlideOversPlugin implements Plugin
             ->map(fn (string $value, string $property): string => "{$property}: {$value};")
             ->implode(' ');
 
-        return new HtmlString("<style>:root { {$declarations} }</style>");
+        $selector = '.fi-body.'.$this->escapeClassName("fi-panel-{$panelId}");
+
+        return new HtmlString("<style>{$selector} { {$declarations} }</style>");
+    }
+
+    /**
+     * Escape a class name for a CSS selector, with hex escapes so that no
+     * character of the panel ID ever reaches the `<style>` tag as it is.
+     */
+    protected function escapeClassName(string $className): string
+    {
+        return preg_replace_callback(
+            '/[^a-zA-Z0-9_-]/',
+            fn (array $match): string => '\\'.dechex(mb_ord($match[0])).' ',
+            $className,
+        );
     }
 
     /**
