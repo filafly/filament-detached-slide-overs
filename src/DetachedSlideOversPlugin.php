@@ -143,7 +143,8 @@ class DetachedSlideOversPlugin implements Plugin
     protected function escapeClassName(string $className): string
     {
         return preg_replace_callback(
-            '/[^a-zA-Z0-9_-]/',
+            // Non-ASCII characters are valid in CSS identifiers as they are.
+            '/[^a-zA-Z0-9_\-\x{80}-\x{10FFFF}]/u',
             fn (array $match): string => '\\'.dechex(mb_ord($match[0])).' ',
             $className,
         );

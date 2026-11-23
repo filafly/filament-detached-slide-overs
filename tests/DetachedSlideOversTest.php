@@ -164,6 +164,8 @@ class DetachedSlideOversTest extends TestCase
         $escape = (new \ReflectionMethod($this->plugin(), 'escapeClassName'))->getClosure($this->plugin());
 
         $this->assertSame('fi-panel-app_2-x', $escape('fi-panel-app_2-x'));
+        $this->assertSame('fi-panel-café', $escape('fi-panel-café'));
+        $this->assertSame('fi-panel-café\\20 x', $escape('fi-panel-café x'));
         $this->assertSame('fi-panel-a\\3c \\2f style\\3e ', $escape('fi-panel-a</style>'));
     }
 
