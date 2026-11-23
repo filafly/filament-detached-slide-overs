@@ -46,7 +46,7 @@ Action::make('edit')
     ])
 ```
 
-That's all it takes: no plugin to register. It works on page header actions, table actions and actions in forms and infolists, and with `slideOverPosition(SlideOverPosition::Start)` for slide-overs that open from the left.
+That's all it takes: no plugin to register. It works on page header actions, table actions and actions in forms and infolists, and with `slideOverPosition()` for slide-overs that open from the left.
 
 If you set `extraModalWindowAttributes()` on the same action, pass `merge: true` or call it before `detached()`, so it doesn't replace the class `detached()` adds.
 
