@@ -1,0 +1,82 @@
+/*
+ * Detached slide-overs: a slide-over that floats off the edge of the screen
+ * as a rounded card, with the page showing around it, instead of a
+ * full-height panel stuck to the edge.
+ *
+ * A slide-over is detached when its window carries .fi-detached-slide-over
+ * (an action's `detached()`), or when the panel has the plugin's marker and
+ * the window doesn't opt out with .fi-attached-slide-over.
+ *
+ * Plain CSS on Filament's own modal classes, so it works with any theme.
+ * Themes restyle it through the --fi-detached-slide-over-* tokens:
+ *   --fi-detached-slide-over-gap     space to the screen edges (0.5rem, 1rem from sm)
+ *   --fi-detached-slide-over-radius  corner radius (0.75rem)
+ */
+.fi-modal.fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-detached-slide-over,
+.fi-body:has(> .fi-detached-slide-overs)
+    .fi-modal.fi-modal-slide-over
+    > .fi-modal-window-ctn
+    > .fi-modal-window:not(.fi-attached-slide-over) {
+    --fi-detached-slide-over-current-gap: var(--fi-detached-slide-over-gap, 0.5rem);
+
+    margin-block: var(--fi-detached-slide-over-current-gap);
+    /* Leave the gap on both sides on phones, where the window is full width. */
+    width: calc(100% - 2 * var(--fi-detached-slide-over-current-gap));
+    height: calc(100dvh - 2 * var(--fi-detached-slide-over-current-gap));
+    max-height: calc(100dvh - 2 * var(--fi-detached-slide-over-current-gap));
+    border-radius: var(--fi-detached-slide-over-radius, 0.75rem);
+
+    /* Clip sticky headers and footers to the rounded corners. */
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+
+    /* A thin scrollbar has no arrow buttons to poke out of the corners. */
+    scrollbar-width: thin;
+
+    & > .fi-modal-header,
+    & > .fi-modal-footer {
+        border-radius: 0;
+    }
+
+    @media (min-width: 40rem) {
+        --fi-detached-slide-over-current-gap: var(--fi-detached-slide-over-gap, 1rem);
+    }
+}
+
+/*
+ * Keep the gap on the side the window slides in from, and slide it all the
+ * way out, past the gap, when it opens and closes.
+ */
+.fi-modal.fi-modal-slide-over-from-end > .fi-modal-window-ctn > .fi-modal-window.fi-detached-slide-over,
+.fi-body:has(> .fi-detached-slide-overs)
+    .fi-modal.fi-modal-slide-over-from-end
+    > .fi-modal-window-ctn
+    > .fi-modal-window:not(.fi-attached-slide-over) {
+    margin-inline-end: var(--fi-detached-slide-over-current-gap);
+
+    &.fi-transition-enter-start,
+    &.fi-transition-leave-end {
+        translate: calc(100% + var(--fi-detached-slide-over-current-gap)) 0;
+
+        &:dir(rtl) {
+            translate: calc(-100% - var(--fi-detached-slide-over-current-gap)) 0;
+        }
+    }
+}
+
+.fi-modal.fi-modal-slide-over-from-start > .fi-modal-window-ctn > .fi-modal-window.fi-detached-slide-over,
+.fi-body:has(> .fi-detached-slide-overs)
+    .fi-modal.fi-modal-slide-over-from-start
+    > .fi-modal-window-ctn
+    > .fi-modal-window:not(.fi-attached-slide-over) {
+    margin-inline-start: var(--fi-detached-slide-over-current-gap);
+
+    &.fi-transition-enter-start,
+    &.fi-transition-leave-end {
+        translate: calc(-100% - var(--fi-detached-slide-over-current-gap)) 0;
+
+        &:dir(rtl) {
+            translate: calc(100% + var(--fi-detached-slide-over-current-gap)) 0;
+        }
+    }
+}
