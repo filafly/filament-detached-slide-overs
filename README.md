@@ -12,7 +12,7 @@ It's the slide-over from [Lucent](https://filafly.com/themes/lucent?utm_source=g
 ## Requirements
 
 - PHP 8.2+
-- Filament v4 or v5 (tested with 4.13 on Laravel 12 and 5.12 on Laravel 13)
+- Filament 4.11+ or 5.6+, the releases that added left and right slide-overs (tested with 4.13 on Laravel 12 and 5.11 and 5.12 on Laravel 13)
 
 ## Installation
 

@@ -2,6 +2,7 @@
 
 namespace Filafly\DetachedSlideOvers;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
@@ -31,6 +32,16 @@ class DetachedSlideOversServiceProvider extends PackageServiceProvider
             if ($condition) {
                 $this->slideOver();
             }
+
+            // The last call wins: drop the class an earlier `detached()` call
+            // added (from `configureUsing()`, say) before adding this one.
+            $this->extraModalWindowAttributes = array_values(array_filter(
+                $this->extraModalWindowAttributes,
+                fn (array|Closure $attributes): bool => ! in_array($attributes, [
+                    ['class' => DetachedSlideOvers::DETACHED_CLASS],
+                    ['class' => DetachedSlideOvers::ATTACHED_CLASS],
+                ], strict: true),
+            ));
 
             return $this->extraModalWindowAttributes([
                 'class' => $condition ? DetachedSlideOvers::DETACHED_CLASS : DetachedSlideOvers::ATTACHED_CLASS,

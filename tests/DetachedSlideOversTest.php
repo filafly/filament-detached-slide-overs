@@ -43,6 +43,20 @@ class DetachedSlideOversTest extends TestCase
         $this->assertFalse($modal->isModalSlideOver());
     }
 
+    public function test_the_last_detached_call_wins(): void
+    {
+        $attached = Action::make('notes')->detached()->detached(false);
+        $detached = Action::make('edit')
+            ->extraModalWindowAttributes(['class' => 'orders-window'])
+            ->detached(false)
+            ->detached();
+
+        $this->assertSame('fi-attached-slide-over', $attached->getExtraModalWindowAttributes()['class']);
+        $classes = explode(' ', $detached->getExtraModalWindowAttributes()['class']);
+
+        $this->assertEqualsCanonicalizing(['orders-window', 'fi-detached-slide-over'], $classes);
+    }
+
     public function test_the_page_mounts_the_detached_actions_as_slide_overs(): void
     {
         $this->signIn();
@@ -131,6 +145,17 @@ class DetachedSlideOversTest extends TestCase
         $this->get('/admin')
             ->assertOk()
             ->assertSee('<style>:root { --fi-detached-slide-over-gap: 1.5rem; --fi-detached-slide-over-radius: calc(1rem + 2px); }</style>', escape: false);
+    }
+
+    public function test_a_zero_gap_and_radius_are_kept(): void
+    {
+        $this->signIn();
+
+        $this->plugin()->gap('0')->radius('0');
+
+        $this->get('/admin')
+            ->assertOk()
+            ->assertSee('<style>:root { --fi-detached-slide-over-gap: 0px; --fi-detached-slide-over-radius: 0px; }</style>', escape: false);
     }
 
     public function test_a_gap_that_is_not_a_css_length_is_rejected(): void

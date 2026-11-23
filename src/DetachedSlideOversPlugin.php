@@ -117,7 +117,7 @@ class DetachedSlideOversPlugin implements Plugin
         $properties = array_filter([
             '--fi-detached-slide-over-gap' => $this->getGap(),
             '--fi-detached-slide-over-radius' => $this->getRadius(),
-        ]);
+        ], fn (?string $value): bool => $value !== null);
 
         if ($properties === []) {
             return null;
@@ -146,6 +146,8 @@ class DetachedSlideOversPlugin implements Plugin
             throw new InvalidArgumentException("The detached slide-over {$name} [{$value}] must be a CSS length, such as `1rem` or `calc(1rem + 2px)`.");
         }
 
-        return $value;
+        // A unitless 0 is a number inside calc(), which can't be subtracted
+        // from the window's 100% width.
+        return $value === '0' ? '0px' : $value;
     }
 }
