@@ -138,7 +138,8 @@ class DetachedSlideOversPlugin implements Plugin
 
     /**
      * Escape a class name for a CSS selector, with hex escapes so that no
-     * character of the panel ID ever reaches the `<style>` tag as it is.
+     * ASCII character other than letters, digits, `_` and `-` ever reaches
+     * the `<style>` tag as it is.
      */
     protected function escapeClassName(string $className): string
     {
@@ -146,6 +147,11 @@ class DetachedSlideOversPlugin implements Plugin
             // Non-ASCII characters are valid in CSS identifiers as they are.
             '/[^a-zA-Z0-9_\-\x{80}-\x{10FFFF}]/u',
             fn (array $match): string => '\\'.dechex(mb_ord($match[0])).' ',
+            $className,
+        ) ?? preg_replace_callback(
+            // Not valid UTF-8: escape byte by byte instead.
+            '/[^a-zA-Z0-9_\-]/',
+            fn (array $match): string => '\\'.dechex(ord($match[0])).' ',
             $className,
         );
     }
