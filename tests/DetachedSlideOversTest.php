@@ -144,7 +144,27 @@ class DetachedSlideOversTest extends TestCase
 
         $this->get('/admin')
             ->assertOk()
-            ->assertSee('<style>:root { --fi-detached-slide-over-gap: 1.5rem; --fi-detached-slide-over-radius: calc(1rem + 2px); }</style>', escape: false);
+            ->assertSee('<style>.fi-body.fi-panel-admin { --fi-detached-slide-over-gap: 1.5rem; --fi-detached-slide-over-radius: calc(1rem + 2px); }</style>', escape: false);
+    }
+
+    public function test_custom_properties_are_scoped_to_the_panels_body(): void
+    {
+        $this->signIn();
+
+        $this->plugin()->gap('2rem');
+
+        $html = $this->get('/admin')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString(':root { --fi-detached-slide-over', $html);
+        $this->assertMatchesRegularExpression('/<body[^>]*class="[^"]*\bfi-body\b[^"]*\bfi-panel-admin\b/', $html);
+    }
+
+    public function test_a_panel_id_is_escaped_in_the_selector(): void
+    {
+        $escape = (new \ReflectionMethod($this->plugin(), 'escapeClassName'))->getClosure($this->plugin());
+
+        $this->assertSame('fi-panel-app_2-x', $escape('fi-panel-app_2-x'));
+        $this->assertSame('fi-panel-a\\3c \\2f style\\3e ', $escape('fi-panel-a</style>'));
     }
 
     public function test_a_zero_gap_and_radius_are_kept(): void
@@ -155,7 +175,7 @@ class DetachedSlideOversTest extends TestCase
 
         $this->get('/admin')
             ->assertOk()
-            ->assertSee('<style>:root { --fi-detached-slide-over-gap: 0px; --fi-detached-slide-over-radius: 0px; }</style>', escape: false);
+            ->assertSee('<style>.fi-body.fi-panel-admin { --fi-detached-slide-over-gap: 0px; --fi-detached-slide-over-radius: 0px; }</style>', escape: false);
     }
 
     public function test_a_gap_that_is_not_a_css_length_is_rejected(): void
